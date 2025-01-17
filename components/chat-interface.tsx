@@ -5,6 +5,7 @@ import { MessageBubble } from "./message-bubble"
 import { Button } from "@/components/ui/button"
 import { responses } from "../data/responses"
 import type { Message } from "../types/message"
+import { LoadingBubble } from "@/components/loading-bubble"
 
 const initialMessages: Message[] = [
   { id: "1", text: "👋 I'm John" },
@@ -14,6 +15,7 @@ const initialMessages: Message[] = [
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
+  const [isLoading, setIsLoading] = useState(false)
 
   const handlePromptClick = (type: keyof typeof responses) => {
     // Add user question
@@ -30,10 +32,14 @@ export function ChatInterface() {
       { id: Date.now().toString(), text: question, isUser: true }
     ])
 
+    // Show loading state
+    setIsLoading(true)
+
     // Add responses with slight delay to simulate typing
     setTimeout(() => {
       responses[type].forEach((response, index) => {
         setTimeout(() => {
+          if (index === 0) setIsLoading(false)
           setMessages(prev => [
             ...prev,
             { id: Date.now().toString() + index, text: response }
@@ -53,6 +59,7 @@ export function ChatInterface() {
             isUser={message.isUser}
           />
         ))}
+        {isLoading && <LoadingBubble />}
       </div>
       <div className="border-t p-4">
         <div className="flex gap-2 overflow-x-auto pb-2">
