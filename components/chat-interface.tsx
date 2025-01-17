@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { responses } from "../data/responses"
 import type { Message } from "../types/message"
 import { LoadingBubble } from "@/components/loading-bubble"
+import { useAutoScroll } from "@/lib/hooks/use-auto-scroll"
 
 const initialMessages: Message[] = [
   { id: "1", text: "👋 I'm John" },
@@ -16,6 +17,12 @@ const initialMessages: Message[] = [
 export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [isLoading, setIsLoading] = useState(false)
+  
+  const { scrollRef} = useAutoScroll({
+    offset: 20,
+    smooth: true,
+    content: messages.map(m => m.text).join('')
+  })
 
   const handlePromptClick = (type: keyof typeof responses) => {
     // Add user question
@@ -51,7 +58,10 @@ export function ChatInterface() {
 
   return (
     <div className="flex h-screen flex-col bg-white">
-      <div className="flex-1 space-y-4 overflow-y-auto p-4">
+      <div 
+        ref={scrollRef}
+        className="flex-1 space-y-4 overflow-y-auto p-4"
+      >
         {messages.map((message) => (
           <MessageBubble
             key={message.id}
@@ -68,28 +78,28 @@ export function ChatInterface() {
             className="flex-shrink-0 rounded-full"
             onClick={() => handlePromptClick("about")}
           >
-            About
+            about
           </Button>
           <Button
             variant="outline"
             className="flex-shrink-0 rounded-full"
             onClick={() => handlePromptClick("sideProjects")}
           >
-            Side Projects
+            side projects
           </Button>
           <Button
             variant="outline"
             className="flex-shrink-0 rounded-full"
             onClick={() => handlePromptClick("workExperience")}
           >
-            Work Experience
+            work
           </Button>
           <Button
             variant="outline"
             className="flex-shrink-0 rounded-full"
             onClick={() => handlePromptClick("contact")}
           >
-            Contact
+            contact
           </Button>
         </div>
       </div>
